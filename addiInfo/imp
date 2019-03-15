@@ -1,0 +1,249 @@
+Anypoint Platform Development: Fundamentals 3.9 - Snippets
+
+* MODULE 1 **********************************************************
+
+* ProgrammableWeb
+http://www.programmableweb.com/
+
+* American Flights web service
+http://training-american-ws.cloudhub.io/api/flights
+
+* American Flights API post body
+{
+  "code": "GQ574",
+  "price": 399,
+  "departureDate": "2016/12/20",
+  "origin": "ORD",
+  "destination": "SFO",
+  "emptySeats": 200,
+  "plane": {"type": "Boeing 747", "totalSeats": 400}
+}
+
+* American Flights API
+http://training-american-api.cloudhub.io/flights
+
+* American Flights API client_id for APDev fictitious application
+d1374b15c6864c3682ddbed2a247a826
+
+* American Flights API client_secret for APDev fictitious application
+4a87fe7e2e43488c927372AEF981F066
+
+* MODULE 3 **********************************************************
+
+* American Flights API description text
+The American Flights API is a system API for operations on the american table in the training database.
+Supported operations
+Get all flights
+Get a flight with a specific ID
+Add a flight
+
+* American Flights API - /{ID} DELETE and PUT methods
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Flight deleted (but not really)
+    put:
+      body:
+        application/json:
+          type: AmericanFlight
+          example: !include examples/AmericanFlightNoIDExample.raml
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Flight updated (but not really)
+
+* MODULE 4 **********************************************************
+
+* MySQL database
+db.host = iltdb.mulesoft-training.com
+db.port = 3306
+db.user = mule
+db.password = mule
+db.database = training
+American table: american
+American table version2: flights
+Account table: accounts
+Account list URL:  http://ilt.mulesoft-training.com/essentials/accounts/show
+or http://localhost:9090/essentials/accounts/show.html
+
+* MySQL database as URL and driver name
+driverName: com.mysql.jdbc.Driver
+url: jdbc:mysql://iltdb.mulesoft-training.com:3306/training?user=mule&password=mule
+
+* Derby database
+driverName: org.apache.derby.jdbc.ClientDriver
+url: jdbc:derby://localhost:1527/memory:training
+
+* SQL expression for American Flights API
+WHERE ID = #[message.inboundProperties.'http.uri.params'.ID]
+
+* American Flights API - /flights POST response example
+{"message": "Flight added (but not really)"}
+
+* MODULE 5 **********************************************************
+
+* Your client ID
+
+
+* Your client secret
+
+
+* MODULE 8 **********************************************************
+
+* United RESTful web service
+http://ilt.mulesoft-training.com/essentials/united/flights
+or if using mulesoft-training-services.jar application:
+http://localhost:9090/essentials/united/flights
+
+* Delta SOAP web service
+http://ilt.mulesoft-training.com/essentials/delta?wsdl
+or if using mulesoft-training-services.jar application:
+http://localhost:9191/essentials/delta?wsdl
+
+* MODULE 12 **********************************************************
+
+* JMS
+ActiveMQ Broker URL: tcp://jms.mulesoft-training.com:61616
+or if using mulesoft-training-services.jar application:
+tcp://localhost:61616
+
+Form URL: http://mu.mulesoft-training.com/jms/
+or if using mulesoft-training-services.jar application:
+http://localhost:9090/essentials/jmsform.html
+
+
+
+
+
+
+
+
+APIkit Router
+    validations
+        success --> routing
+        failed ---> throw exception
+
+http://localhost:8081/api/flights?destination=SFO GET   Accept,client_id,c_s
+ check resource name  -->  yes --> check method yes  --> headers -->  yes 
+check qp --> yes value --> yes
+
+http://localhost:8081/api/flights POST  Body schema
+check resource name  -->  yes --> check method yes  --> headers -->  yes
+check body --> yes
+post:/flights
+
+
+
+http://localhost:8081/api/flights/2 GET  Accept,client_id,c_s
+get:/flights/{ID}suffix
+
+http://localhost:8081/api/flights/2 DELETE
+delete:/flights/{ID}suffix
+http://localhost:8081/api/flights/2 PUT
+put:/flights/{ID}suffix
+
+http://localhost:8081/api/customers GET
+NotFoundException
+404  resource not found
+
+http://localhost:8081/api/flights DELETE
+MethodNotAllowedException
+405 { "message": "Method not allowed" }
+
+http://localhost:8081/api/flights GET
+BadRequestException
+400 { "message": "Bad request" }
+
+
+http://localhost:8081/api/flights POST  Body is application/xml
+UnsupportedMediaTypeException
+
+
+http://localhost:8081/api/flights?destination=AAA GET
+
+
+
+
+
+https://docs.mulesoft.com/downloads/mule-runtime/4.1/secure-properties-tool.jar
+
+command for encry :
+
+java -jar secure-properties-tool.jar file decrypt DES <mode> <key> app-dev.properties <output file>
+
+example : java -jar secure-properties-tool.jar file encrypt AES CBC mulesofttraining app-dev.properties app-edev.properties
+
+
+jagdish api :
+http://training-american-ws-apmvj1.us-e2.cloudhub.io/flights?destination=SFO
+client ID :  e190964cf8b24707b8714fabc9bb8d48
+client_secret : 5288b48b8F554d4ab79B750464a19e4a
+
+
+github imp comm : 
+https://help.github.com/en/articles/adding-a-file-to-a-repository-using-the-command-line
+
+
+============================DWL=====================================
+operator 
+$ :
+
+%dw 1.0
+%output application/java
+---
+
+payload map {
+	flightOperator : $.airlineName,
+	cost: $.price,
+	takeOffDate: $.departureDate,
+	typeOfPlane: $.planeType
+	
+}
+
+
+
+
+%dw 1.0
+%output application/java
+
+
+---
+
+payload map {
+	flightOperator : $.airlineName,
+	cost: $.price,
+	takeOffDate: $.departureDate as :date {format : "yyyy/MM/dd"},
+	typeOfPlane: $.planeType,
+	emptySeats: 10 when $.availableSeats == 0 otherwise 20
+	
+	}
+
+
+
+upper , lower , capitliza , camelize , underscore , dasherize , singularize , plurize , 
+.....
+
+max , min , flatten , splitby
+
+date object :
+
+as : object , as: number , as : boolean
+
+
+
+
+
+
+
+#[server.nanoTime()]_#[message.inboundProperties.originalFilename]
+
+
+
+
+mocking  :
+<ns2:findFlightResponse xmlns:ns2="http://soap.training.mulesoft.com/"><return airlineName="United"><code>A1B2C3</code><departureDate>2015/10/20</departureDate><destination>SFO</destination><emptySeats>40</emptySeats><origin>MUA</origin><planeType>Boing 737</planeType><price>400.0</price></return><return airlineName="Delta"><code>A1B2C4</code><departureDate>2015/10/21</departureDate><destination>LAX</destination><emptySeats>10</emptySeats><origin>MUA</origin><planeType>Boing 737</planeType><price>199.99</price></return><return airlineName="Delta"><code>AFFFC5</code><departureDate>2015/10/21</departureDate><destination>PDX</destination><emptySeats>30</emptySeats><origin>MUA</origin><planeType>Boing 777</planeType><price>283.0</price></return><return airlineName="Delta"><code>AFFFC4</code><departureDate>2015/10/20</departureDate><destination>PDX</destination><emptySeats>0</emptySeats><origin>MUA</origin><planeType>Boing 777</planeType><price>283.0</price></return><return airlineName="Delta"><code>AFFFC3</code><departureDate>2015/10/20</departureDate><destination>PDX</destination><emptySeats>23</emptySeats><origin>MUA</origin><planeType>Boing 777</planeType><price>283.0</price></return></ns2:findFlightResponse>

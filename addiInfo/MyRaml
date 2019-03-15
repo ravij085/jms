@@ -1,0 +1,132 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/6cb14dcc-340d-4b33-8f68-a20460f8740d/ # 
+version: v1
+title: american-flights-api
+
+types:
+  AmericanFlight: !include exchange_modules/68ef9520-24e9-4cf2-b2f5-620025690913/training-american-flight-data-type/1.0.1/AmericanFlightDataType.raml
+
+# This trait we can add to different methods
+traits:
+  error_response_status_codes:
+    responses:
+      401:
+        body:
+          application/json:
+            message: Not authenticated . Please check credentials
+
+
+      500:
+        body:
+          application/json:
+            message: Server side erro . Please try again
+
+
+  custom_auth:
+    headers:
+      client_id:
+        required: true
+        type : string
+        example:  Ajhfjdasha86876asdn
+      client_secrete:
+        required: true
+        type: string
+        example: ajsdaksjk3434jlkasj
+          
+
+      
+  
+
+
+/flights:
+  is: [error_response_status_codes , custom_auth]
+    
+  get:
+    displayName: Get all flights
+    headers:
+      Accept:
+        type: string
+        example: application/json
+        enum: [application/json , application/xml]
+        required: true
+
+      queryParameters:
+      destination:
+        type: string
+        required: true
+        enum: [SFO , LAX, CLE ]
+
+    
+    
+    responses:
+      200:
+        body:
+          application/json:
+            examples: !include exchange_modules/68ef9520-24e9-4cf2-b2f5-620025690913/training-american-flights-example/1.0.1/AmericanFlightsExample.raml
+
+    
+        
+  post:
+    body:
+      application/json:
+        examples: !include examples/AmericanFlightExample.raml
+        type: AmericanFlight
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              message: Flight Added
+
+
+        
+          
+  
+  /{ID}:
+    is: [error_response_status_codes , custom_auth]
+    get:
+      displayName: Get the flight for particular id
+      responses:
+        200:
+          body:
+            application/json:
+              type: AmericanFlight
+              examples: !include examples/AmericanFlightExample.raml
+                
+    #post:
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Flight Deleted
+
+    put:
+      body:
+        application/json:
+          examples: !include examples/AmericanFlightExample.raml
+          type: AmericanFlight
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: FLight updated
+                
+
+        
+            
+          
+            
+
+
+      
+
+    
+
+
+
+
+                
+  
